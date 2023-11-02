@@ -1,4 +1,4 @@
-import type { PartInfo, PartNumber } from "./types"
+import type { PartNumber, PartsListing } from "./types"
 
 export enum VendorType {
   Cars245
@@ -6,6 +6,7 @@ export enum VendorType {
 
 export interface SearchConfig {
   vendorType: VendorType
+  partNumber: string
   searchUrl: URL
   fetchResult(): Promise<SearchResult>
 }
@@ -13,7 +14,8 @@ export interface SearchConfig {
 export abstract class SearchConfig implements SearchConfig {
   searchUrl: URL
 
-  constructor(searchUrl: URL) {
+  constructor(partNumber: string, searchUrl: URL) {
+    this.partNumber = partNumber
     this.searchUrl = searchUrl
   }
 
@@ -25,7 +27,7 @@ export abstract class SearchConfig implements SearchConfig {
     try {
       return {
         success: true,
-        result: await this.fetchPartInfo()
+        result: await this.fetchPartsListing()
       }
     } catch (errorMsg) {
       return {
@@ -36,14 +38,14 @@ export abstract class SearchConfig implements SearchConfig {
   }
 
   /**
-   * Fetches part info from the vendor; errors can be thrown.
+   * Fetches parts info from the vendor; errors can be thrown.
    */
-  protected abstract fetchPartInfo(): Promise<PartInfo>
+  protected abstract fetchPartsListing(): Promise<PartsListing>
 }
 
 export interface SearchResult {
   success: boolean
-  result?: PartInfo
+  result?: PartsListing
   errorMsg?: string
 }
 

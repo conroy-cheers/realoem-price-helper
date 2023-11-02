@@ -17,7 +17,7 @@ export class LocalCache {
     this.storage = new Storage({ area: "local" })
   }
 
-  async fetch(searchConfig: SearchConfig): Promise<SearchResult> {
+  async fetchFor(searchConfig: SearchConfig): Promise<SearchResult> {
     const cachedValue = await this.cacheGet(searchConfig)
     if (cachedValue && !isOutdated(cachedValue, this.expiryTimeMinutes)) {
       return cachedValue.result

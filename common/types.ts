@@ -2,17 +2,36 @@ import type { SearchConfig, SearchResult } from "./vendor"
 
 type PartNumber = string
 
-type CurrencyUnit = string
+type CurrencyValue = string
 
-enum Currency {
+enum CurrencyUnit {
   USD = "USD"
+}
+
+enum QualityLevel {
+  Unknown = 0,
+  Genuine = 1,
+  OE = 2,
+  Premium = 3,
+  Midrange = 4,
+  Budget = 5
+}
+
+type PartBrand = {
+  name: string
+  quality: QualityLevel
 }
 
 type PartInfo = {
   url: URL
   sku: string
-  price: CurrencyUnit
-  currency: Currency
+  brand: PartBrand
+  price: CurrencyValue
+  currency: CurrencyUnit
+}
+
+type PartsListing = {
+  parts: PartInfo[]
 }
 
 type SearchServiceRequest = {
@@ -26,10 +45,13 @@ type SearchServiceResponse = {
 
 export type {
   PartNumber,
+  CurrencyValue,
   CurrencyUnit,
-  Currency,
+  PartBrand,
   PartInfo,
-  SearchConfig,
+  PartsListing,
   SearchServiceRequest,
   SearchServiceResponse
 }
+
+export { QualityLevel }

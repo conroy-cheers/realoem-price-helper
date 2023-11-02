@@ -5,10 +5,11 @@ import { sendToBackground } from "@plasmohq/messaging"
 import type {
   PartInfo,
   PartNumber,
-  SearchConfig,
+  PartsListing,
   SearchServiceRequest,
   SearchServiceResponse
 } from "~common/types"
+import type { SearchConfig } from "~common/vendor"
 
 type PartRow = {
   partNumber: PartNumber
@@ -73,7 +74,7 @@ class SearchError extends Error {
   }
 }
 
-async function getPartInfo(partNumber: PartNumber): Promise<PartInfo> {
+async function getPartsListing(partNumber: PartNumber): Promise<PartsListing> {
   const request: SearchServiceRequest = {
     partNumber
   }
@@ -123,8 +124,10 @@ partRows.forEach(async (partRow, i) => {
   partRow.infoCell.appendChild(textNode)
 
   try {
-    const partInfo = await getPartInfo(partRow.partNumber)
-    partRow.infoCell.appendChild(createPartLinkNode(partInfo))
+    const partsListing = await getPartsListing(partRow.partNumber)
+    partsListing.parts.forEach((partInfo) => {
+      partRow.infoCell.appendChild(createPartLinkNode(partInfo))
+    })
     textNode.remove()
   } catch (e) {
     if (e instanceof SearchError) {

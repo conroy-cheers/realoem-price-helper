@@ -16,7 +16,7 @@ As of right now, [Cars245.com](https://cars245.com) is my favourite seller, so i
 - [ ] Improve UI
 - [ ] Fetch individual shipping costs
 - [ ] Support more stores, with price comparison
-- [ ] Aftermarket part alternatives
+- [x] Aftermarket part alternatives
 
 ## Boilerplate stuff
 
