@@ -6,7 +6,8 @@ import type {
   PartInfo,
   PartNumber,
   PartSearchRequest,
-  PartSearchResponse
+  PartSearchResponse,
+  SearchConfig
 } from "~common/types"
 
 type PartRow = {
@@ -63,6 +64,15 @@ function extendTableRows(): PartRow[] {
   return partRows
 }
 
+class SearchError extends Error {
+  searchConfig: SearchConfig
+
+  constructor(message: string, searchConfig: SearchConfig) {
+    super(message)
+    this.searchConfig = searchConfig
+  }
+}
+
 async function getPartInfo(partNumber: PartNumber): Promise<PartInfo> {
   const request: PartSearchRequest = {
     partNumber
@@ -75,17 +85,30 @@ async function getPartInfo(partNumber: PartNumber): Promise<PartInfo> {
     if (response.success === true) {
       return response.result
     } else if (response.success === false) {
-      throw Error(`Error fetching part info: ${response.error}`)
+      throw new SearchError(
+        `Error fetching part info: ${response.error}`,
+        response.config
+      )
     }
   } else {
     throw Error("Error fetching part info")
   }
 }
 
-function createLinkNode(partInfo: PartInfo): HTMLAnchorElement {
+function createPartLinkNode(partInfo: PartInfo): HTMLAnchorElement {
   const node = document.createElement("a")
   node.href = partInfo.url.toString()
   node.textContent = `$${partInfo.price}`
+  return node
+}
+
+function createSearchLinkNode(
+  searchConfig: SearchConfig,
+  message: string
+): HTMLAnchorElement {
+  const node = document.createElement("a")
+  node.href = searchConfig.searchUrl.toString()
+  node.textContent = message
   return node
 }
 
@@ -101,9 +124,19 @@ partRows.forEach(async (partRow, i) => {
 
   try {
     const partInfo = await getPartInfo(partRow.partNumber)
-    partRow.infoCell.appendChild(createLinkNode(partInfo))
+    partRow.infoCell.appendChild(createPartLinkNode(partInfo))
     textNode.remove()
-  } catch (err) {
-    textNode.textContent = "not found"
+  } catch (e) {
+    if (e instanceof SearchError) {
+      partRow.infoCell.appendChild(
+        createSearchLinkNode(e.searchConfig, "not found")
+      )
+      console.error(
+        `Search for part ${partRow.partNumber} failed: "${e.message}"`
+      )
+      textNode.remove()
+    } else {
+      textNode.textContent = "Error"
+    }
   }
 })

@@ -11,7 +11,7 @@ As of right now, [Cars245.com](https://cars245.com) is my favourite seller, so i
 ## TODO
 
 - [x] Fetch Cars245 prices and links
-- [ ] More thorough error handling
+- [x] More thorough error handling
 - [ ] Cache results locally
 - [ ] Improve UI
 - [ ] Fetch individual shipping costs

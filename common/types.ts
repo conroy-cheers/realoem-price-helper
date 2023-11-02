@@ -1,3 +1,5 @@
+import type { SearchConfig } from "./vendor"
+
 type PartNumber = string
 
 type CurrencyUnit = string
@@ -19,6 +21,7 @@ type PartSearchRequest = {
 
 type PartSearchResponse = {
   success: boolean
+  config: SearchConfig
   result?: PartInfo
   error?: string
 }
@@ -28,6 +31,7 @@ export type {
   CurrencyUnit,
   Currency,
   PartInfo,
+  SearchConfig,
   PartSearchRequest,
   PartSearchResponse
 }

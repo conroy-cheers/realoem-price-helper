@@ -10,15 +10,19 @@ const handler: PlasmoMessaging.MessageHandler = async (
   req: ReqType,
   res: ResType
 ) => {
+  const cars245 = new Cars245()
+  const searchConfig = cars245.getSearchConfig(req.body.partNumber)
   try {
-    const partInfo = await Cars245.getPartInfo(req.body.partNumber)
+    const partInfo = await searchConfig.fetchPartInfo()
     res.send({
       success: true,
+      config: searchConfig,
       result: partInfo
     })
   } catch (error) {
     res.send({
       success: false,
+      config: searchConfig,
       error: error.message
     })
   }
