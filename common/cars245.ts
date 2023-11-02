@@ -2,28 +2,24 @@ import * as CSSSelect from "css-select"
 import { parseDocument } from "htmlparser2"
 
 import type { Currency, PartInfo, PartNumber } from "./types"
-import type { SearchConfig, Vendor } from "./vendor"
+import { SearchConfig, VendorType, type Vendor } from "./vendor"
 
-export const URL_BASE = "https://cars245.com"
+const URL_BASE = "https://cars245.com"
 
-export class Cars245SearchConfig implements SearchConfig {
-  searchUrl: URL
-
-  constructor(searchUrl: URL) {
-    this.searchUrl = searchUrl
-  }
-
-  async fetchPartInfo(): Promise<PartInfo> {
+export class Cars245SearchConfig extends SearchConfig {
+  protected async fetchPartInfo(): Promise<PartInfo> {
     const response = await fetch(this.searchUrl)
     if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`)
+      throw Error(`API request failed with status ${response.status}`)
     }
     return parseSearchResult(await response.text())
   }
 }
 
 export default class Cars245 implements Vendor {
-  getSearchConfig(partNumber: PartNumber): SearchConfig {
+  vendorType = VendorType.Cars245
+
+  getSearchConfig(partNumber: PartNumber): Cars245SearchConfig {
     return new Cars245SearchConfig(Cars245.buildQueryURL(partNumber))
   }
 

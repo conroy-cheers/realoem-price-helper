@@ -5,9 +5,9 @@ import { sendToBackground } from "@plasmohq/messaging"
 import type {
   PartInfo,
   PartNumber,
-  PartSearchRequest,
-  PartSearchResponse,
-  SearchConfig
+  SearchConfig,
+  SearchServiceRequest,
+  SearchServiceResponse
 } from "~common/types"
 
 type PartRow = {
@@ -74,19 +74,19 @@ class SearchError extends Error {
 }
 
 async function getPartInfo(partNumber: PartNumber): Promise<PartInfo> {
-  const request: PartSearchRequest = {
+  const request: SearchServiceRequest = {
     partNumber
   }
-  const response: PartSearchResponse = await sendToBackground({
+  const response: SearchServiceResponse = await sendToBackground({
     name: "search-cars245",
     body: request
   })
   if (response) {
-    if (response.success === true) {
-      return response.result
-    } else if (response.success === false) {
+    if (response.result.success === true) {
+      return response.result.result
+    } else if (response.result.success === false) {
       throw new SearchError(
-        `Error fetching part info: ${response.error}`,
+        `Error fetching part info: ${response.result.errorMsg}`,
         response.config
       )
     }

@@ -1,10 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import Cars245 from "~common/cars245"
-import type { PartSearchRequest, PartSearchResponse } from "~common/types"
+import type { SearchServiceRequest, SearchServiceResponse } from "~common/types"
 
-type ReqType = PlasmoMessaging.Request<"search-cars245", PartSearchRequest>
-type ResType = PlasmoMessaging.Response<PartSearchResponse>
+type ReqType = PlasmoMessaging.Request<"search-cars245", SearchServiceRequest>
+type ResType = PlasmoMessaging.Response<SearchServiceResponse>
 
 const handler: PlasmoMessaging.MessageHandler = async (
   req: ReqType,
@@ -12,20 +12,11 @@ const handler: PlasmoMessaging.MessageHandler = async (
 ) => {
   const cars245 = new Cars245()
   const searchConfig = cars245.getSearchConfig(req.body.partNumber)
-  try {
-    const partInfo = await searchConfig.fetchPartInfo()
-    res.send({
-      success: true,
-      config: searchConfig,
-      result: partInfo
-    })
-  } catch (error) {
-    res.send({
-      success: false,
-      config: searchConfig,
-      error: error.message
-    })
-  }
+  const searchResult = await searchConfig.fetchResult()
+  res.send({
+    config: searchConfig,
+    result: searchResult
+  })
 }
 
 export default handler

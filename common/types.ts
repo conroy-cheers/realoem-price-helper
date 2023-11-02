@@ -1,4 +1,4 @@
-import type { SearchConfig } from "./vendor"
+import type { SearchConfig, SearchResult } from "./vendor"
 
 type PartNumber = string
 
@@ -15,15 +15,13 @@ type PartInfo = {
   currency: Currency
 }
 
-type PartSearchRequest = {
+type SearchServiceRequest = {
   partNumber: PartNumber
 }
 
-type PartSearchResponse = {
-  success: boolean
+type SearchServiceResponse = {
   config: SearchConfig
-  result?: PartInfo
-  error?: string
+  result: SearchResult
 }
 
 export type {
@@ -32,6 +30,6 @@ export type {
   Currency,
   PartInfo,
   SearchConfig,
-  PartSearchRequest,
-  PartSearchResponse
+  SearchServiceRequest,
+  SearchServiceResponse
 }
