@@ -7,6 +7,8 @@ import { SearchConfig, VendorType, type Vendor } from "./vendor"
 const URL_BASE = "https://cars245.com"
 
 export class Cars245SearchConfig extends SearchConfig {
+  vendorType = VendorType.Cars245
+
   protected async fetchPartInfo(): Promise<PartInfo> {
     const response = await fetch(this.searchUrl)
     if (!response.ok) {

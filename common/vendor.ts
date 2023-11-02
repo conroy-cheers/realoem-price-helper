@@ -5,6 +5,7 @@ export enum VendorType {
 }
 
 export interface SearchConfig {
+  vendorType: VendorType
   searchUrl: URL
   fetchResult(): Promise<SearchResult>
 }
