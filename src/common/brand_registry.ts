@@ -2,11 +2,22 @@ import { Storage } from "@plasmohq/storage"
 
 import { QualityLevel, type PartBrand } from "~common/types"
 
+const KEY_PREFIX = "brands-"
+
 export class BrandRegistry {
-  private storage: Storage
+  protected storage: Storage
 
   constructor() {
     this.storage = new Storage({ area: "sync" })
+  }
+
+  async getAllBrands(): Promise<PartBrand[]> {
+    const storageData = await this.storage.getAll()
+    const brandKeys = Object.keys(storageData).filter((key) =>
+      key.startsWith(KEY_PREFIX)
+    )
+    const brandValues = brandKeys.map((key) => JSON.parse(storageData[key]))
+    return brandValues
   }
 
   async getBrand(brandName: string): Promise<PartBrand> {
@@ -24,12 +35,23 @@ export class BrandRegistry {
     }
   }
 
+  async deregisterAll() {
+    const brands = await this.getAllBrands()
+    for (const brand of brands) {
+      await this.deregisterBrand(brand)
+    }
+  }
+
+  async deregisterBrand(brand: PartBrand) {
+    await this.storage.remove(this.makeKey(brand.name))
+  }
+
   async registerBrand(brand: PartBrand) {
     await this.storage.set(this.makeKey(brand.name), brand)
   }
 
-  private makeKey(brandString: string): string {
-    return `brands-${brandString}`
+  protected makeKey(brandString: string): string {
+    return `${KEY_PREFIX}${brandString.toUpperCase()}`
   }
 
   private getDefaultQuality(brandName: string): QualityLevel {
