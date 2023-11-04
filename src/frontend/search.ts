@@ -8,7 +8,7 @@ import type {
 } from "~common/types"
 import type { SearchConfig } from "~common/vendor"
 
-class SearchError extends Error {
+export class SearchError extends Error {
   searchConfig: SearchConfig
 
   constructor(message: string, searchConfig: SearchConfig) {

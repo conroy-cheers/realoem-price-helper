@@ -12,7 +12,7 @@ import { createRoot } from "react-dom/client"
 
 import type { PartNumber, PartsListing } from "~common/types"
 import PartSummary from "~components/part_summary"
-import { getPartsListing } from "~frontend/search"
+import { getPartsListing, SearchError } from "~frontend/search"
 
 function getTableBody() {
   return document.querySelector("#partsList > tbody")
@@ -102,13 +102,26 @@ export const getStyle: PlasmoGetStyle = () => {
 
 const RealOEMShopInline: FC<{ partNumber: PartNumber }> = (props) => {
   const [partsListing, setPartsListing] = useState(null as PartsListing | null)
+  const [errorMsg, setErrorMsg] = useState(
+    null as { msg: string; url: URL } | null
+  )
   useEffect(() => {
     async function getParts() {
-      const partsListing = await getPartsListing(props.partNumber)
-      setPartsListing(partsListing)
+      try {
+        const partsListing = await getPartsListing(props.partNumber)
+        setPartsListing(partsListing)
+      } catch (err) {
+        if (err instanceof SearchError) {
+          console.log(err.searchConfig)
+          setErrorMsg({ msg: "Not found", url: err.searchConfig.searchUrl })
+        } else setErrorMsg({ msg: "Error", url: null })
+      }
     }
     getParts()
-  })
+  }, [])
+  if (errorMsg) {
+    return <a href={errorMsg.url.toString()}>{errorMsg.msg}</a>
+  }
   if (partsListing) {
     return (
       <div className="whitespace-nowrap">
