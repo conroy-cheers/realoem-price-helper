@@ -1,5 +1,3 @@
-import "~/style.css"
-
 import React, { useEffect, useState } from "react"
 
 import BrandConfigRow from "~components/brand_config_row"

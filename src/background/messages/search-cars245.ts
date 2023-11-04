@@ -4,7 +4,7 @@ import { LocalCache } from "~common/cache"
 import Cars245 from "~common/cars245"
 import type { SearchServiceRequest, SearchServiceResponse } from "~common/types"
 
-const cache = new LocalCache(0)
+const cache = new LocalCache(1)
 
 type ReqType = PlasmoMessaging.Request<"search-cars245", SearchServiceRequest>
 type ResType = PlasmoMessaging.Response<SearchServiceResponse>

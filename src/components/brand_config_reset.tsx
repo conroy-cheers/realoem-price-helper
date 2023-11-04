@@ -1,5 +1,3 @@
-import "~/style.css"
-
 import { useState } from "react"
 
 import { BrandRegistry } from "~common/brand_registry"

@@ -1,6 +1,3 @@
-import "~/style.css"
-
-import React, { useState } from "react"
 import Select from "react-select"
 
 import { QualityLevel, type PartBrand } from "~common/types"
@@ -32,9 +29,7 @@ const selectCustomStyles = {
 }
 
 const BrandConfigRow = (props: BrandConfigProps) => {
-  console.log(props.brandName)
   const [brand, setBrand] = brandRegistry.useBrandStorage(props.brandName)
-  console.log(brand)
 
   function handleQualityChange(option) {
     let updatedBrand: PartBrand = {
