@@ -10,8 +10,15 @@ import type {
 import { useEffect, useState, type FC } from "react"
 import { createRoot } from "react-dom/client"
 
-import type { PartNumber, PartsListing } from "~common/types"
+import {
+  QualityLevel,
+  type PartInfo,
+  type PartNumber,
+  type PartsListing
+} from "~common/types"
+import { enumKeys, partInfoKey } from "~common/util"
 import PartSummary from "~components/part_summary"
+import QualitySelect from "~components/quality_select"
 import { getPartsListing, SearchError } from "~frontend/search"
 
 function getTableBody() {
@@ -80,7 +87,6 @@ export const render: PlasmoRender<PlasmoCSUIJSXContainer> = async (
   { anchor, createRootContainer },
   InlineCSUIContainer
 ) => {
-  console.log(anchor)
   const rootContainer = await createRootContainer(anchor)
 
   const root = createRoot(rootContainer) // Any root
@@ -105,6 +111,47 @@ const RealOEMShopInline: FC<{ partNumber: PartNumber }> = (props) => {
   const [errorMsg, setErrorMsg] = useState(
     null as { msg: string; url: URL } | null
   )
+  const [selectedQuality, setSelectedQuality] = useState(QualityLevel.Unknown)
+
+  function partsMatchingQuality(
+    listing: PartsListing,
+    quality: QualityLevel
+  ): PartInfo[] {
+    // special case for QualityLevel.Unknown: return all
+    if (quality == QualityLevel.Unknown) {
+      return listing.parts
+    }
+
+    const matchingParts = listing.parts.filter(
+      (part) => part.brand.quality == quality
+    )
+    if (matchingParts.length > 0) {
+      return matchingParts
+    }
+
+    const betterParts = listing.parts.filter(
+      (part) =>
+        part.brand.quality != QualityLevel.Unknown &&
+        part.brand.quality <= quality
+    )
+    if (betterParts.length > 0) {
+      return betterParts
+    }
+
+    // failure; return all parts
+    return listing.parts
+  }
+
+  function qualityLevelsUnavailable(listing: PartsListing): QualityLevel[] {
+    const presentQualityLevels = [
+      ...new Set(listing.parts.map((part) => part.brand.quality))
+    ]
+    const allQualityLevels = enumKeys(QualityLevel)
+    return allQualityLevels.filter(
+      (x) => !presentQualityLevels.includes(x) && x != QualityLevel.Unknown
+    )
+  }
+
   useEffect(() => {
     async function getParts() {
       try {
@@ -112,22 +159,29 @@ const RealOEMShopInline: FC<{ partNumber: PartNumber }> = (props) => {
         setPartsListing(partsListing)
       } catch (err) {
         if (err instanceof SearchError) {
-          console.log(err.searchConfig)
           setErrorMsg({ msg: "Not found", url: err.searchConfig.searchUrl })
         } else setErrorMsg({ msg: "Error", url: null })
       }
     }
     getParts()
   }, [])
+
   if (errorMsg) {
     return <a href={errorMsg.url.toString()}>{errorMsg.msg}</a>
   }
   if (partsListing) {
     return (
-      <div className="whitespace-nowrap">
-        {partsListing.parts.map((part) => (
-          <PartSummary part={part}></PartSummary>
-        ))}
+      <div className="flex flex-row space-x-2">
+        <QualitySelect
+          value={selectedQuality}
+          valuesDisabled={qualityLevelsUnavailable(partsListing)}
+          setValue={setSelectedQuality}
+        />
+        <div className="whitespace-nowrap">
+          {partsMatchingQuality(partsListing, selectedQuality).map((part) => (
+            <PartSummary key={partInfoKey(part)} part={part}></PartSummary>
+          ))}
+        </div>
       </div>
     )
   }
