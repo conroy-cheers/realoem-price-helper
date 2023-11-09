@@ -40,6 +40,15 @@ const ShopDetail: FC<{
     }
   }, [partsListing])
 
+  let exactMatches = []
+  let suggestedMatches = []
+  if (partsListing) {
+    const { exactMatches: exact, suggestedMatches: suggested } =
+      filterAndSortParts(partsListing, selectedFilter)
+    exactMatches = exact
+    suggestedMatches = suggested
+  }
+
   return (
     <div className="bg-slate-100 border border-slate-500 rounded-md pt-2 pb-4 px-4">
       <span className="block text-lg font-semibold">Shop</span>
@@ -54,9 +63,14 @@ const ShopDetail: FC<{
             large={true}
           />
         </div>
-        <CompactPartsDisplay
-          parts={filterAndSortParts(partsListing, selectedFilter)}
-        />
+        <div>
+          Results:
+          <CompactPartsDisplay parts={exactMatches} />
+        </div>
+        <div>
+          Suggested:
+          <CompactPartsDisplay parts={suggestedMatches} />
+        </div>
       </div>
     </div>
   )

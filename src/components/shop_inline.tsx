@@ -45,6 +45,11 @@ const ShopInline: FC<{
   }
 
   if (partsListing) {
+    const { exactMatches, suggestedMatches } = filterAndSortParts(
+      partsListing,
+      selectedFilter
+    )
+
     return (
       <div className="flex flex-row space-x-2">
         <div>
@@ -55,9 +60,7 @@ const ShopInline: FC<{
             large={false}
           />
         </div>
-        <CompactPartsDisplay
-          parts={filterAndSortParts(partsListing, selectedFilter)}
-        />
+        <CompactPartsDisplay parts={exactMatches} />
       </div>
     )
   }

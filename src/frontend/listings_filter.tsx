@@ -7,18 +7,35 @@ import {
 import { type PartInfo, type PartsListing } from "~common/types"
 import { enumKeys } from "~common/util"
 
+export type FilteredParts = {
+  exactMatches: PartInfo[]
+  suggestedMatches: PartInfo[]
+}
+
 export function filterAndSortParts(
   listing: PartsListing,
   filter: QualityFilter
-): PartInfo[] {
+): FilteredParts {
   if (listing) {
     const exactMatches = listing.parts.filter((part) =>
       partMatchesQualityFilter(filter, part)
     )
+    const exactMatchesMaxPrice = Math.max(
+      ...exactMatches.map((p) => Number(p.price))
+    )
     const exceedMatches = listing.parts.filter((part) =>
       partExceedsQualityFilter(filter, part)
     )
-    return partsOrderedByPrice(exactMatches)
+    const suggestedMatches = exceedMatches
+      .filter((p) => Number(p.price) <= exactMatchesMaxPrice)
+      .filter(
+        (suggestedPart) =>
+          !exactMatches.some((exactPart) => exactPart.url === suggestedPart.url)
+      )
+    return {
+      exactMatches: partsOrderedByPrice(exactMatches),
+      suggestedMatches: partsOrderedByPrice(suggestedMatches)
+    }
   }
 }
 
