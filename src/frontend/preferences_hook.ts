@@ -1,6 +1,7 @@
 import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 
+import { QualityFilter } from "~common/quality_filter"
 import { QualityLevel, type Preferences } from "~common/types"
 
 const PREFS_KEY = "realoem-price-helper-preferences"
@@ -18,16 +19,16 @@ export class PreferencesHook {
 
   usePrefsStorage() {
     return useStorage<Preferences>({ key: PREFS_KEY, instance: this.storage }, {
-      globalPreferredQuality: QualityLevel.Unknown
+      globalPreferredQuality: QualityFilter.Any
     } as Preferences)
   }
 
-  useQualityLevelStorage(): readonly [QualityLevel, (QualityLevel) => void] {
+  useQualityFilterStorage(): readonly [QualityFilter, (QualityFilter) => void] {
     const [prefs, setPrefs] = this.usePrefsStorage()
-    const globalPreferredQuality = prefs.globalPreferredQuality
-    const qualitySetter = (globalPreferredQuality) => {
+    const globalQualityFilter = prefs.globalPreferredQuality
+    const qualityFilterSetter = (globalPreferredQuality) => {
       setPrefs({ ...prefs, globalPreferredQuality })
     }
-    return [globalPreferredQuality, qualitySetter]
+    return [globalQualityFilter, qualityFilterSetter]
   }
 }

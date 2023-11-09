@@ -1,3 +1,4 @@
+import type { QualityFilter } from "./quality_filter"
 import type { SearchConfig, SearchResult } from "./vendor"
 
 type PartNumber = string
@@ -9,6 +10,7 @@ enum CurrencyUnit {
 }
 
 enum QualityLevel {
+  // After Unknown, keys must be assigned in inverse order of quality.
   Unknown = 0,
   Genuine = 1,
   OE = 2,
@@ -44,8 +46,10 @@ type SearchServiceResponse = {
 }
 
 type Preferences = {
-  globalPreferredQuality: QualityLevel
+  globalPreferredQuality: QualityFilter
 }
+
+export type Setter<T> = (v: T) => void
 
 export type {
   PartNumber,

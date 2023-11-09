@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
+import BrandConfigReset from "~components/brand_config_reset"
 import BrandConfigRow from "~components/brand_config_row"
 import { BrandRegistryHook } from "~frontend/brand_registry_hook"
-
-import BrandConfigReset from "./brand_config_reset"
 
 const brandRegistry = new BrandRegistryHook()
 
