@@ -1,12 +1,13 @@
 import { useStorage } from "@plasmohq/storage/hook"
 
 import { BrandRegistry } from "~common/brand_registry"
+import { QualityLevel } from "~common/types"
 
 export class BrandRegistryHook extends BrandRegistry {
   useBrandStorage(brandName: string) {
     return useStorage(
       { key: this.makeKey(brandName), instance: this.storage },
-      (v) => (v === undefined ? { name: brandName, quality: 0 } : v)
+      { name: brandName, quality: QualityLevel.Unknown }
     )
   }
 }

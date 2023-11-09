@@ -4,6 +4,8 @@ import "./style.css"
 
 import appIcon from "data-base64:~assets/icon.png"
 
+import UserPreferencesConfigurator from "~components/user_preferences_configurator"
+
 function IndexPopup() {
   return (
     <div className="w-[24rem] pt-4 px-2">
@@ -16,6 +18,10 @@ function IndexPopup() {
             </span>
           </div>
         </div>
+      </div>
+      <div>
+        <span className="text-lg">Preferences</span>
+        <UserPreferencesConfigurator />
       </div>
       <div>
         <span className="text-lg">Brand Configuration</span>

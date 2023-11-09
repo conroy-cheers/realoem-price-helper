@@ -43,6 +43,10 @@ type SearchServiceResponse = {
   result: SearchResult
 }
 
+type Preferences = {
+  globalPreferredQuality: QualityLevel
+}
+
 export type {
   PartNumber,
   CurrencyValue,
@@ -51,7 +55,8 @@ export type {
   PartInfo,
   PartsListing,
   SearchServiceRequest,
-  SearchServiceResponse
+  SearchServiceResponse,
+  Preferences
 }
 
 export { QualityLevel }
