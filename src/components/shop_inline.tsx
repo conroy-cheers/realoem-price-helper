@@ -10,7 +10,7 @@ import { getParts } from "~frontend/get_parts"
 import {
   filterAndSortParts,
   qualityFiltersUnavailable
-} from "../frontend/listings_filter"
+} from "~frontend/listings_filter"
 
 const ShopInline: FC<{
   partNumber: PartNumber

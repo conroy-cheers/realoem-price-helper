@@ -1,15 +1,15 @@
 import type { QualityFilter } from "./quality_filter"
-import type { SearchConfig, SearchResult } from "./vendor"
+import type { DetailResult, SearchConfig, SearchResult } from "./vendor"
 
-type PartNumber = string
+export type PartNumber = string
 
-type CurrencyValue = string
+export type CurrencyValue = string
 
-enum CurrencyUnit {
+export enum CurrencyUnit {
   USD = "USD"
 }
 
-enum QualityLevel {
+export enum QualityLevel {
   // After Unknown, keys must be assigned in inverse order of quality.
   Unknown = 0,
   Genuine = 1,
@@ -19,48 +19,47 @@ enum QualityLevel {
   Budget = 5
 }
 
-type PartBrand = {
+export type PartBrand = {
   name: string
   quality: QualityLevel
 }
 
-type PartInfo = {
+export type PartDetail = {
+  image?: URL
+}
+
+export type PartInfo = {
   url: URL
   sku: string
   brand: PartBrand
   price: CurrencyValue
   currency: CurrencyUnit
+  detail?: PartDetail
 }
 
-type PartsListing = {
+export type PartsListing = {
   parts: PartInfo[]
 }
 
-type SearchServiceRequest = {
+export type SearchServiceRequest = {
   partNumber: PartNumber
 }
 
-type SearchServiceResponse = {
+export type SearchServiceResponse = {
   config: SearchConfig
   result: SearchResult
 }
 
-type Preferences = {
+export type DetailServiceRequest = {
+  partURL: URL
+}
+
+export type DetailServiceResponse = {
+  result: DetailResult
+}
+
+export type Preferences = {
   globalPreferredQuality: QualityFilter
 }
 
 export type Setter<T> = (v: T) => void
-
-export type {
-  PartNumber,
-  CurrencyValue,
-  CurrencyUnit,
-  PartBrand,
-  PartInfo,
-  PartsListing,
-  SearchServiceRequest,
-  SearchServiceResponse,
-  Preferences
-}
-
-export { QualityLevel }

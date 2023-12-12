@@ -1,9 +1,15 @@
 import { useEffect, useState, type FC } from "react"
 
 import { QualityFilter } from "~common/quality_filter"
-import { type PartNumber, type PartsListing } from "~common/types"
+import {
+  type PartInfo,
+  type PartNumber,
+  type PartsListing
+} from "~common/types"
+import { getVendor } from "~common/vendors"
 import CompactPartsDisplay from "~components/compact_parts_display"
 import LoadError from "~components/load_error"
+import { getPartDetail } from "~frontend/detail"
 import { getParts } from "~frontend/get_parts"
 import {
   filterAndSortParts,
@@ -23,6 +29,16 @@ const ShopDetail: FC<{
   const [selectedFilter, setSelectedFilter] = useState(
     props.initialQualityFilter
   )
+  const [partImageURL, setPartImageURL] = useState("")
+
+  function updatePartImageURL() {
+    const imageURLs = partsListing.parts
+      .filter((part) => part.detail != null && part.detail.image != null)
+      .map((part) => part.detail.image)
+    if (imageURLs.length > 0) {
+      setPartImageURL(imageURLs[0].toString())
+    }
+  }
 
   const unavailableQualities = partsListing
     ? qualityFiltersUnavailable(partsListing)
@@ -37,11 +53,21 @@ const ShopDetail: FC<{
       if (partsListing && unavailableQualities.includes(selectedFilter)) {
         setSelectedFilter(QualityFilter.Any)
       }
+
+      partsListing.parts.forEach((element, index, array) => {
+        const vendor = getVendor(new URL(element.url))
+        if (vendor !== null) {
+          getPartDetail(element.url).then((detail) => {
+            array[index].detail = detail
+            updatePartImageURL()
+          })
+        }
+      })
     }
   }, [partsListing])
 
-  let exactMatches = []
-  let suggestedMatches = []
+  let exactMatches: PartInfo[] = []
+  let suggestedMatches: PartInfo[] = []
   if (partsListing) {
     const { exactMatches: exact, suggestedMatches: suggested } =
       filterAndSortParts(partsListing, selectedFilter)
@@ -71,6 +97,7 @@ const ShopDetail: FC<{
           Suggested:
           <CompactPartsDisplay parts={suggestedMatches} />
         </div>
+        <img src={partImageURL.toString()} />
       </div>
     </div>
   )

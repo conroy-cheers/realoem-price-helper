@@ -1,4 +1,5 @@
-import type { PartNumber, PartsListing } from "./types"
+import Cars245 from "./cars245"
+import type { PartDetail, PartNumber, PartsListing } from "./types"
 
 export enum VendorType {
   Cars245
@@ -49,12 +50,25 @@ export interface SearchResult {
   errorMsg?: string
 }
 
+export interface DetailResult {
+  success: boolean
+  result?: PartDetail
+  errorMsg?: string
+}
+
 export interface Vendor {
-  vendorType: VendorType
+  getVendorType(): VendorType
+  getUrlBase(): string
 
   /**
    * @returns Preconfigured SearchConfig instance for this query and vendor
    * @param partNumber Part number to search for
    */
   getSearchConfig(partNumber: PartNumber): SearchConfig
+
+  /**
+   * Fetches PartDetail from a given part URL
+   * @param partURL part URL to load
+   */
+  fetchPartDetail(partURL: URL): Promise<PartDetail>
 }

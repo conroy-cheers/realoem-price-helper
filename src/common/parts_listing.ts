@@ -1,4 +1,4 @@
-import type { PartInfo } from "./types"
+import type { PartDetail, PartInfo } from "~common/types"
 
 export function partsOrderedByPrice(parts: PartInfo[]): PartInfo[] {
   return parts.toSorted(

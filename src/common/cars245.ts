@@ -5,6 +5,7 @@ import { BrandRegistry } from "./brand_registry"
 import type {
   CurrencyUnit,
   CurrencyValue,
+  PartDetail,
   PartInfo,
   PartNumber,
   PartsListing
@@ -50,13 +51,31 @@ export class Cars245SearchConfig extends SearchConfig {
 }
 
 export default class Cars245 implements Vendor {
-  vendorType = VendorType.Cars245
+  getVendorType(): VendorType {
+    return VendorType.Cars245
+  }
+
+  getUrlBase(): string {
+    return URL_BASE
+  }
 
   getSearchConfig(partNumber: PartNumber): Cars245SearchConfig {
     return new Cars245SearchConfig(
       partNumber,
       Cars245.buildQueryURL(partNumber)
     )
+  }
+
+  async fetchPartDetail(partURL: URL): Promise<PartDetail> {
+    const detailResponse = await fetch(partURL)
+    if (!detailResponse.ok) {
+      throw Error(`API request failed with status ${detailResponse.status}`)
+    }
+
+    const imageURL = await parseImageURL(await detailResponse.text())
+    return {
+      image: imageURL
+    }
   }
 
   private static buildQueryURL(partNumber: PartNumber): URL {
@@ -126,6 +145,19 @@ function getCanonicalPart(
   }
 
   return matchingParts[0]
+}
+
+async function parseImageURL(responseText: string): Promise<URL | null> {
+  try {
+    const doc: any = parseDocument(responseText)
+    const imageElem = CSSSelect.selectOne("img.unit-product__images-img", doc)
+    if (!imageElem) {
+      return null
+    }
+    return new URL(imageElem.attribs.src, URL_BASE)
+  } catch (error) {
+    return null
+  }
 }
 
 async function parseAlternativeParts(
