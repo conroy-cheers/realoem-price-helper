@@ -28,17 +28,25 @@ export class LocalCache {
     }
   }
 
+  private makeKey(searchConfig: SearchConfig): string {
+    return (
+      searchConfig.vendorType.toString() +
+      ":" +
+      searchConfig.partNumber.toString()
+    )
+  }
+
   private async cacheGet(
     searchConfig: SearchConfig
   ): Promise<CachedSearchResult> {
-    return await this.storage.get(searchConfig.searchUrl.toString())
+    return await this.storage.get(this.makeKey(searchConfig))
   }
 
   private async cacheSet(
     searchConfig: SearchConfig,
     searchResult: CachedSearchResult
   ) {
-    await this.storage.set(searchConfig.searchUrl.toString(), searchResult)
+    await this.storage.set(this.makeKey(searchConfig), searchResult)
   }
 
   private async performFetch(

@@ -4,12 +4,35 @@ import {
   partMatchesQualityFilter,
   QualityFilter
 } from "~common/quality_filter"
-import { type PartInfo, type PartsListing } from "~common/types"
+import {
+  QualityLevel,
+  type PartDetail,
+  type PartInfo,
+  type PartsListing
+} from "~common/types"
 import { enumKeys } from "~common/util"
 
 export type FilteredParts = {
   exactMatches: PartInfo[]
   suggestedMatches: PartInfo[]
+}
+
+export function getBestImage(listing: PartsListing): PartDetail {
+  const partsWithImages = listing.parts.filter(
+    (part) => part.detail != null && part.detail.image != null
+  )
+  if (!partsWithImages.length) {
+    return null
+  }
+
+  const bestQualityParts = partsWithImages
+    .filter((p) => p.brand.quality != QualityLevel.Unknown)
+    .toSorted((a, b) => a.brand.quality - b.brand.quality)
+  if (bestQualityParts.length > 0) {
+    return bestQualityParts[0].detail
+  } else {
+    return partsWithImages[0].detail
+  }
 }
 
 export function filterAndSortParts(

@@ -24,7 +24,7 @@ export async function getPartsListing(
     partNumber
   }
   const response: SearchServiceResponse = await sendToBackground({
-    name: "search-cars245",
+    name: "search",
     body: request
   })
   if (response) {

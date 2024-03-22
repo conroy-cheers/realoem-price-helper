@@ -1,10 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { LocalCache } from "~common/cache"
-import Cars245 from "~common/cars245"
 import type { DetailServiceRequest, DetailServiceResponse } from "~common/types"
+import Cars245 from "~common/vendors/cars245"
 
-type ReqType = PlasmoMessaging.Request<"search-cars245", DetailServiceRequest>
+type ReqType = PlasmoMessaging.Request<"search", DetailServiceRequest>
 type ResType = PlasmoMessaging.Response<DetailServiceResponse>
 
 const handler: PlasmoMessaging.MessageHandler = async (

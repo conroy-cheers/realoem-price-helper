@@ -6,7 +6,8 @@ export type PartNumber = string
 export type CurrencyValue = string
 
 export enum CurrencyUnit {
-  USD = "USD"
+  USD = "USD",
+  AUD = "AUD"
 }
 
 export enum QualityLevel {

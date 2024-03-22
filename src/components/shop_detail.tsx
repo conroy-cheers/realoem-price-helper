@@ -13,6 +13,7 @@ import { getPartDetail } from "~frontend/detail"
 import { getParts } from "~frontend/get_parts"
 import {
   filterAndSortParts,
+  getBestImage,
   qualityFiltersUnavailable
 } from "~frontend/listings_filter"
 
@@ -30,13 +31,12 @@ const ShopDetail: FC<{
     props.initialQualityFilter
   )
   const [partImageURL, setPartImageURL] = useState("")
+  const [loadingDone, setLoadingDone] = useState(false)
 
   function updatePartImageURL() {
-    const imageURLs = partsListing.parts
-      .filter((part) => part.detail != null && part.detail.image != null)
-      .map((part) => part.detail.image)
-    if (imageURLs.length > 0) {
-      setPartImageURL(imageURLs[0].toString())
+    const partDetail = getBestImage(partsListing)
+    if (partDetail) {
+      setPartImageURL(partDetail.image.toString())
     }
   }
 
@@ -63,6 +63,8 @@ const ShopDetail: FC<{
           })
         }
       })
+
+      setLoadingDone(true)
     }
   }, [partsListing])
 
@@ -79,6 +81,11 @@ const ShopDetail: FC<{
     <div className="bg-slate-100 border border-slate-500 rounded-md pt-2 pb-4 px-4">
       <span className="block text-lg font-semibold">Shop</span>
       {errorMsg ? <LoadError error={errorMsg} /> : ""}
+      <div className="w-80 h-80 border-gray-400">
+        {loadingDone ? "" : <span>Loading...</span>}
+        <img src={partImageURL.toString()} className="object-contain" />
+        {loadingDone && !partImageURL ? <span>no image</span> : ""}
+      </div>
       <div className="flex flex-row space-x-2">
         <div>
           <span className="block">Quality: </span>
@@ -97,7 +104,6 @@ const ShopDetail: FC<{
           Suggested:
           <CompactPartsDisplay parts={suggestedMatches} />
         </div>
-        <img src={partImageURL.toString()} />
       </div>
     </div>
   )

@@ -1,21 +1,22 @@
-import Cars245 from "./cars245"
 import type { PartDetail, PartNumber, PartsListing } from "./types"
+import Cars245 from "./vendors/cars245"
 
 export enum VendorType {
-  Cars245
+  Cars245,
+  RunAutoParts
 }
 
 export interface SearchConfig {
   vendorType: VendorType
   partNumber: string
-  searchUrl: URL
+  searchUrl: URL | null
   fetchResult(): Promise<SearchResult>
 }
 
 export abstract class SearchConfig implements SearchConfig {
-  searchUrl: URL
+  searchUrl: URL | null
 
-  constructor(partNumber: string, searchUrl: URL) {
+  constructor(partNumber: string, searchUrl: URL | null = null) {
     this.partNumber = partNumber
     this.searchUrl = searchUrl
   }

@@ -1,5 +1,5 @@
-import Cars245 from "./cars245"
 import type { Vendor } from "./vendor"
+import Cars245 from "./vendors/cars245"
 
 /**
  *
