@@ -78,13 +78,6 @@ export default class RunAutoParts implements Vendor {
       image: imageURL
     }
   }
-
-  private static buildQueryURL(partNumber: PartNumber): URL {
-    const searchURL = "https://cars245.com/en/catalog/"
-    let params = new URLSearchParams()
-    params.append("q", partNumber)
-    return new URL(searchURL + "?" + params.toString())
-  }
 }
 
 async function parseImageURL(responseText: string): Promise<URL | null> {

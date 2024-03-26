@@ -3,23 +3,19 @@ import Cars245 from "./vendors/cars245"
 
 export enum VendorType {
   Cars245,
-  RunAutoParts
+  RunAutoParts,
+  Schmiedmann
 }
 
 export interface SearchConfig {
   vendorType: VendorType
   partNumber: string
-  searchUrl: URL | null
   fetchResult(): Promise<SearchResult>
 }
 
 export abstract class SearchConfig implements SearchConfig {
-  searchUrl: URL | null
-
-  constructor(partNumber: string, searchUrl: URL | null = null) {
+  constructor(partNumber: string) {
     this.partNumber = partNumber
-    this.searchUrl = searchUrl
-  }
 
   /**
    * @returns a SearchResult wrapping either successful search results,

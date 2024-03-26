@@ -16,8 +16,8 @@ const handler: PlasmoMessaging.MessageHandler = async (
 ) => {
   // const cars245 = new Cars245()
   // const searchConfig = cars245.getSearchConfig(req.body.partNumber)
-  const runautoparts = new RunAutoParts()
-  const searchConfig = runautoparts.getSearchConfig(req.body.partNumber)
+  // const runautoparts = new RunAutoParts()
+  // const searchConfig = runautoparts.getSearchConfig(req.body.partNumber)
   const searchResult = await cache.fetchFor(searchConfig)
   res.send({
     config: searchConfig,

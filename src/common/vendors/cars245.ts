@@ -18,8 +18,17 @@ const brandRegistry = new BrandRegistry()
 export class Cars245SearchConfig extends SearchConfig {
   vendorType = VendorType.Cars245
 
+  private static buildQueryURL(partNumber: PartNumber): URL {
+    const searchURL = "https://cars245.com/en/catalog/"
+    let params = new URLSearchParams()
+    params.append("q", partNumber)
+    return new URL(searchURL + "?" + params.toString())
+  }
+
   protected async fetchPartsListing(): Promise<PartsListing> {
-    const searchResponse = await fetch(this.searchUrl)
+    const searchResponse = await fetch(
+      Cars245SearchConfig.buildQueryURL(this.partNumber)
+    )
     if (!searchResponse.ok) {
       throw Error(`API request failed with status ${searchResponse.status}`)
     }
@@ -60,10 +69,7 @@ export default class Cars245 implements Vendor {
   }
 
   getSearchConfig(partNumber: PartNumber): Cars245SearchConfig {
-    return new Cars245SearchConfig(
-      partNumber,
-      Cars245.buildQueryURL(partNumber)
-    )
+    return new Cars245SearchConfig(partNumber)
   }
 
   async fetchPartDetail(partURL: URL): Promise<PartDetail> {
@@ -76,13 +82,6 @@ export default class Cars245 implements Vendor {
     return {
       image: imageURL
     }
-  }
-
-  private static buildQueryURL(partNumber: PartNumber): URL {
-    const searchURL = "https://cars245.com/en/catalog/"
-    let params = new URLSearchParams()
-    params.append("q", partNumber)
-    return new URL(searchURL + "?" + params.toString())
   }
 }
 
