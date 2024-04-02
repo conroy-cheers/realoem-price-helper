@@ -1,5 +1,4 @@
 import * as CSSSelect from "css-select"
-import { parseDocument } from "htmlparser2"
 
 import { BrandRegistry } from "../brand_registry"
 import type {
@@ -10,6 +9,7 @@ import type {
   PartNumber,
   PartsListing
 } from "../types"
+import { parseDocument } from "../util"
 import { SearchConfig, VendorType, type Vendor } from "../vendor"
 
 const URL_BASE = "https://cars245.com"

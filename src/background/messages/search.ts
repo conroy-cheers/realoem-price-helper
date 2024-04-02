@@ -4,6 +4,7 @@ import { LocalCache } from "~common/cache"
 import type { SearchServiceRequest, SearchServiceResponse } from "~common/types"
 import Cars245 from "~common/vendors/cars245"
 import RunAutoParts from "~common/vendors/runautoparts"
+import Schmiedmann from "~common/vendors/schmiedmann"
 
 const cache = new LocalCache(1)
 
@@ -18,6 +19,8 @@ const handler: PlasmoMessaging.MessageHandler = async (
   // const searchConfig = cars245.getSearchConfig(req.body.partNumber)
   // const runautoparts = new RunAutoParts()
   // const searchConfig = runautoparts.getSearchConfig(req.body.partNumber)
+  const schmiedmann = new Schmiedmann()
+  const searchConfig = schmiedmann.getSearchConfig(req.body.partNumber)
   const searchResult = await cache.fetchFor(searchConfig)
   res.send({
     config: searchConfig,

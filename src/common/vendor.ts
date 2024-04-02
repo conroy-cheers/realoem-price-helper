@@ -1,5 +1,4 @@
 import type { PartDetail, PartNumber, PartsListing } from "./types"
-import Cars245 from "./vendors/cars245"
 
 export enum VendorType {
   Cars245,
@@ -16,6 +15,7 @@ export interface SearchConfig {
 export abstract class SearchConfig implements SearchConfig {
   constructor(partNumber: string) {
     this.partNumber = partNumber
+  }
 
   /**
    * @returns a SearchResult wrapping either successful search results,

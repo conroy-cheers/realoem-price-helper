@@ -7,7 +7,8 @@ export type CurrencyValue = string
 
 export enum CurrencyUnit {
   USD = "USD",
-  AUD = "AUD"
+  AUD = "AUD",
+  EUR = "EUR"
 }
 
 export enum QualityLevel {
