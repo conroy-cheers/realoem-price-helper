@@ -12,7 +12,12 @@ import {
   type PartNumber,
   type PartsListing
 } from "../types"
-import { SearchConfig, VendorType, type Vendor } from "../vendor"
+import {
+  SearchConfig,
+  VendorType,
+  type Vendor,
+  type VendorPartIdentifier
+} from "../vendor"
 
 const URL_BASE = "https://runautoparts.com.au/"
 const ALGOLIA_API_KEY = "b5a103e4dcfc662ad3ea04efee761397"
@@ -46,7 +51,6 @@ export class RunAutoPartsSearchConfig extends SearchConfig {
             } as PartInfo
           })
         )
-        // parts: [canonicalPart].concat(alternativeParts)
       }
     } catch (err) {
       throw Error(`API request failed`)
@@ -67,8 +71,10 @@ export default class RunAutoParts implements Vendor {
     return new RunAutoPartsSearchConfig(partNumber)
   }
 
-  async fetchPartDetail(partURL: URL): Promise<PartDetail> {
-    const detailResponse = await fetch(partURL)
+  async fetchPartDetail(
+    partIdentifier: VendorPartIdentifier
+  ): Promise<PartDetail> {
+    const detailResponse = await fetch(partIdentifier.url)
     if (!detailResponse.ok) {
       throw Error(`API request failed with status ${detailResponse.status}`)
     }

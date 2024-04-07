@@ -53,6 +53,12 @@ export interface DetailResult {
   errorMsg?: string
 }
 
+export type VendorPartIdentifier = {
+  vendor: VendorType
+  url?: URL
+  id?: string
+}
+
 export interface Vendor {
   getVendorType(): VendorType
   getUrlBase(): string
@@ -64,8 +70,8 @@ export interface Vendor {
   getSearchConfig(partNumber: PartNumber): SearchConfig
 
   /**
-   * Fetches PartDetail from a given part URL
-   * @param partURL part URL to load
+   * Fetches PartDetail from a given part identifier
+   * @param partIdentifier part to load
    */
-  fetchPartDetail(partURL: URL): Promise<PartDetail>
+  fetchPartDetail(partIdentifier: VendorPartIdentifier): Promise<PartDetail>
 }

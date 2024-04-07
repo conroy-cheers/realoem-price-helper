@@ -10,7 +10,7 @@ import { getVendor } from "~common/vendors"
 import CompactPartsDisplay from "~components/compact_parts_display"
 import LoadError from "~components/load_error"
 import { getPartDetail } from "~frontend/detail"
-import { getParts } from "~frontend/get_parts"
+import { getParts, type ErrorMsg } from "~frontend/get_parts"
 import {
   filterAndSortParts,
   getBestImage,
@@ -24,9 +24,7 @@ const ShopDetail: FC<{
   initialQualityFilter: QualityFilter
 }> = (props) => {
   const [partsListing, setPartsListing] = useState(null as PartsListing | null)
-  const [errorMsg, setErrorMsg] = useState(
-    null as { msg: string; url: URL } | null
-  )
+  const [errorMsg, setErrorMsg] = useState(null as ErrorMsg | null)
   const [selectedFilter, setSelectedFilter] = useState(
     props.initialQualityFilter
   )
@@ -57,7 +55,7 @@ const ShopDetail: FC<{
       partsListing.parts.forEach((element, index, array) => {
         const vendor = getVendor(new URL(element.url))
         if (vendor !== null) {
-          getPartDetail(element.url).then((detail) => {
+          getPartDetail(element).then((detail) => {
             array[index].detail = detail
             updatePartImageURL()
           })
@@ -79,6 +77,9 @@ const ShopDetail: FC<{
 
   return (
     <div className="bg-slate-100 border border-slate-500 rounded-md pt-2 pb-4 px-4">
+      <span>
+        {partsListing ? JSON.stringify(partsListing.parts) : "loadin"}
+      </span>
       <span className="block text-lg font-semibold">Shop</span>
       {errorMsg ? <LoadError error={errorMsg} /> : ""}
       <div className="w-80 h-80 border-gray-400">

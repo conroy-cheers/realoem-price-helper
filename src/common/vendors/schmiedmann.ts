@@ -1,6 +1,3 @@
-import * as CSSSelect from "css-select"
-import { parseDocument } from "htmlparser2"
-
 import { BrandRegistry } from "../brand_registry"
 import {
   CurrencyUnit,
@@ -10,34 +7,33 @@ import {
   type PartNumber,
   type PartsListing
 } from "../types"
-import { SearchConfig, VendorType, type Vendor } from "../vendor"
+import {
+  SearchConfig,
+  VendorType,
+  type Vendor,
+  type VendorPartIdentifier
+} from "../vendor"
 
-const URL_BASE = "https://schmiedmann.com"
+const URL_BASE = "https://www.schmiedmann.com"
 const brandRegistry = new BrandRegistry()
+
+const GET_PRODUCT_SEARCH_URL =
+  "https://www.schmiedmann.com/WebService.asmx/GetProductSearch"
+const PROCESS_SEARCH_URL =
+  "https://www.schmiedmann.com/WebService.asmx/ProcessSearchRequest"
 
 export class SchmiedmannSearchConfig extends SearchConfig {
   vendorType = VendorType.Schmiedmann
 
-  private static GET_PRODUCT_SEARCH_URL =
-    "https://www.schmiedmann.com/WebService.asmx/GetProductSearch"
-  private static PROCESS_SEARCH_URL =
-    "https://www.schmiedmann.com/WebService.asmx/ProcessSearchRequest"
-
   protected async fetchPartsListing(): Promise<PartsListing> {
-    const mybody = JSON.stringify(makeProcessSearchRequest(this.partNumber))
-    const processSearchResponse = await fetch(
-      SchmiedmannSearchConfig.PROCESS_SEARCH_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(makeProcessSearchRequest(this.partNumber))
-      }
-    )
+    const processSearchResponse = await fetch(PROCESS_SEARCH_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(makeProcessSearchRequest(this.partNumber))
+    })
     if (!processSearchResponse.ok) {
-      const body = await processSearchResponse.text()
-      const code = processSearchResponse.status
       throw Error(
         `API request failed with status ${processSearchResponse.status}`
       )
@@ -46,43 +42,55 @@ export class SchmiedmannSearchConfig extends SearchConfig {
     const products: ProcessSearchProduct[] = JSON.parse(
       processSearchResponseData.d
     ).Products
-
-    const getProductSearchResponse = await fetch(
-      SchmiedmannSearchConfig.GET_PRODUCT_SEARCH_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(
-          makeGetProductSearchRequest(
-            products.map((searchProduct, index) => {
-              return {
-                Number: searchProduct.RawProductNumber,
-                Index: index,
-                UseSpecialOffer: "true",
-                SupplierId: 0
-              }
-            })
-          )
-        )
-      }
+    return fetchProductInfo(
+      products.map((product) => {
+        return {
+          productNumber: product.RawProductNumber,
+          supplierID: product.SupplierId
+        }
+      })
     )
-    if (!getProductSearchResponse.ok) {
-      throw Error(
-        `API request failed with status ${processSearchResponse.status}`
-      )
-    }
-    const searchResultsData: GetProductSearchResponse =
-      await getProductSearchResponse.json()
+  }
+}
 
-    return {
-      parts: await Promise.all(
-        searchResultsData.d.Objects.Products.map(
-          async (product) => await parseProduct(product)
-        )
+type ProductSearchItem = {
+  productNumber: string
+  supplierID: number
+}
+
+async function fetchProductInfo(products: ProductSearchItem[]) {
+  const getProductSearchResponse = await fetch(GET_PRODUCT_SEARCH_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(
+      makeGetProductSearchRequest(
+        products.map((product, index) => {
+          return {
+            Number: product.productNumber,
+            Index: index,
+            UseSpecialOffer: "true",
+            SupplierId: product.supplierID
+          }
+        })
       )
-    }
+    )
+  })
+  if (!getProductSearchResponse.ok) {
+    throw Error(
+      `API request failed with status ${getProductSearchResponse.status}`
+    )
+  }
+  const searchResultsData: GetProductSearchResponse =
+    await getProductSearchResponse.json()
+
+  return {
+    parts: await Promise.all(
+      searchResultsData.d.Objects.Products.map(
+        async (product) => await parseProduct(product)
+      )
+    )
   }
 }
 
@@ -190,7 +198,7 @@ function makeGetProductSearchRequest(
 ): GetProductSearchRequest {
   return {
     data: JSON.stringify({ Products: products }),
-    language: "en",
+    language: "English",
     currency: "EUR",
     vatFactor: 0
   }
@@ -209,6 +217,7 @@ type GetProductSearchResponse = {
 
 async function parseProduct(product: SearchProduct): Promise<PartInfo> {
   return {
+    vendor: VendorType.Schmiedmann,
     url: new URL(product.DirectLink, URL_BASE),
     sku: product.ProductNumber,
     brand: await brandRegistry.getBrand(product.ManufacturersNames),
@@ -242,15 +251,12 @@ export default class Schmiedmann implements Vendor {
     return new SchmiedmannSearchConfig(partNumber)
   }
 
-  async fetchPartDetail(partURL: URL): Promise<PartDetail> {
-    const detailResponse = await fetch(partURL)
-    if (!detailResponse.ok) {
-      throw Error(`API request failed with status ${detailResponse.status}`)
-    }
-
-    const imageURL = await parseImageURL(await detailResponse.text())
-    return {
-      image: imageURL
-    }
+  async fetchPartDetail(
+    partIdentifier: VendorPartIdentifier
+  ): Promise<PartDetail> {
+    const [supplierIDstr, productNumber] = partIdentifier.id.split("_", 1)
+    const supplierID = Number(supplierIDstr)
+    const products = await fetchProductInfo([{ productNumber, supplierID }])
+    return products.parts[0].detail
   }
 }

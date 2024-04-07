@@ -2,7 +2,7 @@ import BrandConfigurator from "~components/brand_configurator"
 
 import "./style.css"
 
-import appIcon from "data-base64:~assets/icon.png"
+import appIcon from "data-base64:~/../assets/icon.png"
 
 import UserPreferencesConfigurator from "~components/user_preferences_configurator"
 

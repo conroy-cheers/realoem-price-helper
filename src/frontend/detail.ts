@@ -4,16 +4,16 @@ import type {
   DetailServiceRequest,
   DetailServiceResponse,
   PartDetail,
-  PartNumber,
-  PartsListing,
-  SearchServiceRequest,
-  SearchServiceResponse
+  PartInfo
 } from "~common/types"
-import type { SearchConfig } from "~common/vendor"
 
-export async function getPartDetail(partURL: URL): Promise<PartDetail> {
+export async function getPartDetail(part: PartInfo): Promise<PartDetail> {
   const request: DetailServiceRequest = {
-    partURL
+    partIdentifier: {
+      vendor: part.vendor,
+      url: part.url,
+      id: part.sku
+    }
   }
   const response: DetailServiceResponse = await sendToBackground({
     name: "detail-cars245",

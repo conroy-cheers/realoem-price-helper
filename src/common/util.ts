@@ -12,7 +12,7 @@ export function enumKeys<O extends EnumType>(obj: O): number[] {
 }
 
 export function partInfoKey(part: PartInfo) {
-  return `${part.brand}-${part.sku}`
+  return `${part.vendor}-${part.brand}-${part.sku}`
 }
 
 export function parseDocument(htmlString: string) {

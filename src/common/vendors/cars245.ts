@@ -10,7 +10,12 @@ import type {
   PartsListing
 } from "../types"
 import { parseDocument } from "../util"
-import { SearchConfig, VendorType, type Vendor } from "../vendor"
+import {
+  SearchConfig,
+  VendorType,
+  type Vendor,
+  type VendorPartIdentifier
+} from "../vendor"
 
 const URL_BASE = "https://cars245.com"
 const brandRegistry = new BrandRegistry()
@@ -72,8 +77,10 @@ export default class Cars245 implements Vendor {
     return new Cars245SearchConfig(partNumber)
   }
 
-  async fetchPartDetail(partURL: URL): Promise<PartDetail> {
-    const detailResponse = await fetch(partURL)
+  async fetchPartDetail(
+    partIdentifier: VendorPartIdentifier
+  ): Promise<PartDetail> {
+    const detailResponse = await fetch(partIdentifier.url)
     if (!detailResponse.ok) {
       throw Error(`API request failed with status ${detailResponse.status}`)
     }
@@ -120,7 +127,8 @@ async function getPartInfo(productAnchor): Promise<PartInfo> {
     productAnchor
   ).attribs.alt
   const brand = await brandRegistry.getBrand(brandText)
-  return { url, sku, brand, price, currency }
+  const vendor = VendorType.Cars245
+  return { vendor, url, sku, brand, price, currency }
 }
 
 function getCanonicalPart(
@@ -210,6 +218,7 @@ async function parseAlternatePartRow(
   const price = rawPriceBig.replace("$", "") + rawPriceSmall
 
   return {
+    vendor: VendorType.Cars245,
     brand,
     sku,
     url,

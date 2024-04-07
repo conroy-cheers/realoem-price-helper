@@ -13,7 +13,7 @@ const handler: PlasmoMessaging.MessageHandler = async (
 ) => {
   const cars245 = new Cars245()
   try {
-    const detailResult = await cars245.fetchPartDetail(req.body.partURL)
+    const detailResult = await cars245.fetchPartDetail(req.body.partIdentifier)
     res.send({
       result: {
         success: true,

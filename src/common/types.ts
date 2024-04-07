@@ -1,5 +1,11 @@
 import type { QualityFilter } from "./quality_filter"
-import type { DetailResult, SearchConfig, SearchResult } from "./vendor"
+import type {
+  DetailResult,
+  SearchConfig,
+  SearchResult,
+  VendorPartIdentifier,
+  VendorType
+} from "./vendor"
 
 export type PartNumber = string
 
@@ -31,6 +37,7 @@ export type PartDetail = {
 }
 
 export type PartInfo = {
+  vendor: VendorType
   url: URL
   sku: string
   brand: PartBrand
@@ -53,7 +60,7 @@ export type SearchServiceResponse = {
 }
 
 export type DetailServiceRequest = {
-  partURL: URL
+  partIdentifier: VendorPartIdentifier
 }
 
 export type DetailServiceResponse = {
