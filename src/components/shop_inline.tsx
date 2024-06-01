@@ -5,8 +5,7 @@ import { type PartNumber, type PartsListing } from "~common/types"
 import CompactPartsDisplay from "~components/compact_parts_display"
 import LoadError from "~components/load_error"
 import PartFilterControl from "~components/part_filter_control"
-import { getParts } from "~frontend/get_parts"
-
+import { getParts, type ErrorMsg } from "~frontend/get_parts"
 import {
   filterAndSortParts,
   qualityFiltersUnavailable
@@ -17,25 +16,26 @@ const ShopInline: FC<{
   initialQualityFilter: QualityFilter
 }> = (props) => {
   const [partsListing, setPartsListing] = useState(null as PartsListing | null)
-  const [errorMsg, setErrorMsg] = useState(
-    null as { msg: string; url: URL } | null
-  )
+  const [errorMsg, setErrorMsg] = useState(null as ErrorMsg | null)
   const [selectedFilter, setSelectedFilter] = useState(
     props.initialQualityFilter
   )
+  const [loadingDone, setLoadingDone] = useState(false)
 
   const unavailableQualities = partsListing
     ? qualityFiltersUnavailable(partsListing)
     : []
 
   useEffect(() => {
-    getParts(props.partNumber, setPartsListing, setErrorMsg)
+    getParts(props.partNumber, setPartsListing, setErrorMsg, setLoadingDone)
   }, [])
 
   useEffect(() => {
     if (partsListing !== null) {
       if (partsListing && unavailableQualities.includes(selectedFilter)) {
         setSelectedFilter(QualityFilter.Any)
+      } else {
+        setSelectedFilter(props.initialQualityFilter)
       }
     }
   }, [partsListing])
@@ -60,6 +60,7 @@ const ShopInline: FC<{
             large={false}
           />
         </div>
+        <span>{!loadingDone ? "loading..." : ""}</span>
         <CompactPartsDisplay parts={exactMatches} />
       </div>
     )

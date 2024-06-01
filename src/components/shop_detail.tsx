@@ -43,13 +43,15 @@ const ShopDetail: FC<{
     : []
 
   useEffect(() => {
-    getParts(props.partNumber, setPartsListing, setErrorMsg)
+    getParts(props.partNumber, setPartsListing, setErrorMsg, setLoadingDone)
   }, [])
 
   useEffect(() => {
     if (partsListing !== null) {
       if (partsListing && unavailableQualities.includes(selectedFilter)) {
         setSelectedFilter(QualityFilter.Any)
+      } else {
+        setSelectedFilter(props.initialQualityFilter)
       }
 
       partsListing.parts.forEach((element, index, array) => {
@@ -61,8 +63,6 @@ const ShopDetail: FC<{
           })
         }
       })
-
-      setLoadingDone(true)
     }
   }, [partsListing])
 
@@ -77,9 +77,6 @@ const ShopDetail: FC<{
 
   return (
     <div className="bg-slate-100 border border-slate-500 rounded-md pt-2 pb-4 px-4">
-      <span>
-        {partsListing ? JSON.stringify(partsListing.parts) : "loadin"}
-      </span>
       <span className="block text-lg font-semibold">Shop</span>
       {errorMsg ? <LoadError error={errorMsg} /> : ""}
       <div className="w-80 h-80 border-gray-400">

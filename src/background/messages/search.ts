@@ -9,10 +9,11 @@ import {
   type SearchServiceRequest,
   type SearchServiceResponse
 } from "~common/types"
-import type {
-  FulfilledSearch,
-  SearchConfig,
-  SearchResult
+import {
+  VendorType,
+  type FulfilledSearch,
+  type SearchConfig,
+  type SearchResult
 } from "~common/vendor"
 import RunAutoParts from "~common/vendors/runautoparts"
 import Schmiedmann from "~common/vendors/schmiedmann"
@@ -22,35 +23,17 @@ const cache = new LocalCache(1)
 type ReqType = PlasmoMessaging.Request<"search", SearchServiceRequest>
 type ResType = PlasmoMessaging.Response<SearchServiceResponse>
 
-async function convertPartCurrency(
-  part: PartInfo,
-  targetCurrency: CurrencyUnit
-): Promise<PartInfo> {
-  const ratio = await getConversionRate(part.currency, targetCurrency)
-  return {
-    ...part,
-    currency: targetCurrency,
-    price: Math.round(part.price * ratio * 100) / 100
-  }
-}
-
-async function mergeSearchResults(
-  searchResults: SearchResult[],
-  targetCurrency: CurrencyUnit
-): Promise<SearchResult> {
-  let parts = searchResults
-    .filter((search) => search.result !== undefined)
-    .flatMap((search) => search.result.parts)
-
-  const currencyConvertedParts = await Promise.all(
-    parts.map((part) => convertPartCurrency(part, targetCurrency))
-  )
-
-  return {
-    success: true,
-    result: {
-      parts: currencyConvertedParts
-    }
+function getSearchConfigForVendor(
+  partNumber: string,
+  vendor: VendorType
+): SearchConfig {
+  switch (vendor) {
+    case VendorType.Cars245:
+      return new Cars245().getSearchConfig(partNumber)
+    case VendorType.RunAutoParts:
+      return new RunAutoParts().getSearchConfig(partNumber)
+    case VendorType.Schmiedmann:
+      return new Schmiedmann().getSearchConfig(partNumber)
   }
 }
 
@@ -58,32 +41,12 @@ const handler: PlasmoMessaging.MessageHandler = async (
   req: ReqType,
   res: ResType
 ) => {
-  const searchConfigs = []
-  searchConfigs.push(new Cars245().getSearchConfig(req.body.partNumber))
-  searchConfigs.push(new RunAutoParts().getSearchConfig(req.body.partNumber))
+  const config = getSearchConfigForVendor(req.body.partNumber, req.body.vendor)
 
-  // const schmiedmann = new Schmiedmann()
-  // const searchConfig = schmiedmann.getSearchConfig(req.body.partNumber)
-
-  const resultPromises: Promise<FulfilledSearch>[] = searchConfigs.map(
-    async (searchConfig) => {
-      return {
-        searchConfig: searchConfig,
-        searchResult: await cache.fetchFor(searchConfig)
-      }
-    }
-  )
-  const searchResults = await Promise.all(resultPromises)
-
-  let combinedResult = {
-    vendorResults: searchResults,
-    combinedResult: await mergeSearchResults(
-      searchResults.map((search) => search.searchResult),
-      req.body.preferredCurrency
-    )
-  }
-  console.warn(combinedResult)
-  res.send(combinedResult)
+  res.send({
+    config,
+    result: await cache.fetchFor(config)
+  })
 }
 
 export default handler

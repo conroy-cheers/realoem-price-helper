@@ -53,12 +53,12 @@ export type PartsListing = {
 
 export type SearchServiceRequest = {
   partNumber: PartNumber
-  preferredCurrency: CurrencyUnit
+  vendor: VendorType
 }
 
 export type SearchServiceResponse = {
-  vendorResults: FulfilledSearch[]
-  combinedResult: SearchResult
+  config: SearchConfig
+  result: SearchResult
 }
 
 export type DetailServiceRequest = {
