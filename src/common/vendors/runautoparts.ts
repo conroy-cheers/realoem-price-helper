@@ -43,7 +43,7 @@ export class RunAutoPartsSearchConfig extends SearchConfig {
               url: hit.url,
               sku: hit.sku,
               brand: await brandRegistry.getBrand(hit.brand),
-              price: hit.price.AUD.default,
+              price: Number(hit.price.AUD.default),
               currency: CurrencyUnit.AUD,
               detail: {
                 image: new URL(hit.thumbnail_url)

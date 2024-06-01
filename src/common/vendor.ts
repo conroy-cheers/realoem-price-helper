@@ -47,6 +47,11 @@ export interface SearchResult {
   errorMsg?: string
 }
 
+export interface FulfilledSearch {
+  searchConfig: SearchConfig
+  searchResult: SearchResult
+}
+
 export interface DetailResult {
   success: boolean
   result?: PartDetail

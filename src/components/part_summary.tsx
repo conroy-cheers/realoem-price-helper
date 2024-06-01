@@ -1,5 +1,6 @@
 import { type FC } from "react"
 
+import { formatPrice } from "~common/parts_listing"
 import { type PartInfo } from "~common/types"
 
 const PartSummary: FC<{ part: PartInfo }> = (props) => {
@@ -10,7 +11,7 @@ const PartSummary: FC<{ part: PartInfo }> = (props) => {
         <a
           href={props.part.url.toString()}
           className="text-blue-600 hover:text-blue-800 visited:text-purple-600">
-          ${props.part.price}
+          {formatPrice(props.part)}
         </a>
       </span>
     </div>

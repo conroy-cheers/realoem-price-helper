@@ -215,7 +215,9 @@ async function parseAlternatePartRow(
   const brand = await brandRegistry.getBrand(rawBrandText.trim())
   const sku = rawSkuText.replaceAll(" ", "")
   const url = new URL(rawPartUrl, URL_BASE)
-  const price = rawPriceBig.replace("$", "") + rawPriceSmall
+  const price = Number(
+    rawPriceBig.replace("$", "").replace(",", "") + rawPriceSmall
+  )
 
   return {
     vendor: VendorType.Cars245,

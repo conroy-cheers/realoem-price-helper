@@ -2,8 +2,8 @@ import "isomorphic-fetch"
 
 import { describe, it } from "@jest/globals"
 
+import Cars245 from "~/common/vendors/cars245"
 import { VendorType } from "~common/vendor"
-import Cars245 from "~common/vendors/cars245"
 
 import { validateSearchConfig, validateSearchResult } from "./verify"
 

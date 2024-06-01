@@ -1,6 +1,7 @@
 import type { QualityFilter } from "./quality_filter"
 import type {
   DetailResult,
+  FulfilledSearch,
   SearchConfig,
   SearchResult,
   VendorPartIdentifier,
@@ -9,7 +10,7 @@ import type {
 
 export type PartNumber = string
 
-export type CurrencyValue = string
+export type CurrencyValue = number
 
 export enum CurrencyUnit {
   USD = "USD",
@@ -52,11 +53,12 @@ export type PartsListing = {
 
 export type SearchServiceRequest = {
   partNumber: PartNumber
+  preferredCurrency: CurrencyUnit
 }
 
 export type SearchServiceResponse = {
-  config: SearchConfig
-  result: SearchResult
+  vendorResults: FulfilledSearch[]
+  combinedResult: SearchResult
 }
 
 export type DetailServiceRequest = {
@@ -69,6 +71,7 @@ export type DetailServiceResponse = {
 
 export type Preferences = {
   globalPreferredQuality: QualityFilter
+  preferredCurrency: CurrencyUnit
 }
 
 export type Setter<T> = (v: T) => void

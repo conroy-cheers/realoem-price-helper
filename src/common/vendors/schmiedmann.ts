@@ -221,7 +221,7 @@ async function parseProduct(product: SearchProduct): Promise<PartInfo> {
     url: new URL(product.DirectLink, URL_BASE),
     sku: product.ProductNumber,
     brand: await brandRegistry.getBrand(product.ManufacturersNames),
-    price: product.PriceExVat.toString(),
+    price: product.PriceExVat,
     currency: getCurrency(product.Currency),
     detail: {
       image: new URL(`/imagehandler/0/${product.ImageIds[0]}.jpg`, URL_BASE)

@@ -1,8 +1,8 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
+import Cars245 from "~/common/vendors/cars245"
 import { LocalCache } from "~common/cache"
 import type { DetailServiceRequest, DetailServiceResponse } from "~common/types"
-import Cars245 from "~common/vendors/cars245"
 
 type ReqType = PlasmoMessaging.Request<"search", DetailServiceRequest>
 type ResType = PlasmoMessaging.Response<DetailServiceResponse>
