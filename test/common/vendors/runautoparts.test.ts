@@ -7,7 +7,7 @@ import RunAutoParts from "~common/vendors/runautoparts"
 
 import { validateSearchConfig, validateSearchResult } from "./verify"
 
-const PART_NUMBER = "11428637821"
+const PART_NUMBER = "34116855000"
 
 describe("test Run Auto Parts search", () => {
   const runautoparts = new RunAutoParts()
