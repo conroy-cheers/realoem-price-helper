@@ -14,7 +14,7 @@ import { getParts, type ErrorMsg } from "~frontend/get_parts"
 import {
   filterAndSortParts,
   getBestImage,
-  qualityFiltersUnavailable
+  qualityFiltersAvailable
 } from "~frontend/listings_filter"
 
 import PartFilterControl from "./part_filter_control"
@@ -38,20 +38,21 @@ const ShopDetail: FC<{
     }
   }
 
-  const unavailableQualities = partsListing
-    ? qualityFiltersUnavailable(partsListing)
-    : []
+  const availableQualities = (partsListing: PartsListing) =>
+    partsListing ? qualityFiltersAvailable(partsListing) : []
 
   useEffect(() => {
     getParts(props.partNumber, setPartsListing, setErrorMsg, setLoadingDone)
-  }, [])
+  }, [props.partNumber])
 
   useEffect(() => {
     if (partsListing !== null) {
-      if (partsListing && unavailableQualities.includes(selectedFilter)) {
-        setSelectedFilter(QualityFilter.Any)
-      } else {
+      if (
+        availableQualities(partsListing).includes(props.initialQualityFilter)
+      ) {
         setSelectedFilter(props.initialQualityFilter)
+      } else {
+        setSelectedFilter(QualityFilter.Any)
       }
 
       partsListing.parts.forEach((element, index, array) => {

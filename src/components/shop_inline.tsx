@@ -8,7 +8,7 @@ import PartFilterControl from "~components/part_filter_control"
 import { getParts, type ErrorMsg } from "~frontend/get_parts"
 import {
   filterAndSortParts,
-  qualityFiltersUnavailable
+  qualityFiltersAvailable
 } from "~frontend/listings_filter"
 
 const ShopInline: FC<{
@@ -22,20 +22,21 @@ const ShopInline: FC<{
   )
   const [loadingDone, setLoadingDone] = useState(false)
 
-  const unavailableQualities = partsListing
-    ? qualityFiltersUnavailable(partsListing)
-    : []
+  const availableQualities = (partsListing: PartsListing) =>
+    partsListing ? qualityFiltersAvailable(partsListing) : []
 
   useEffect(() => {
     getParts(props.partNumber, setPartsListing, setErrorMsg, setLoadingDone)
-  }, [])
+  }, [props.partNumber])
 
   useEffect(() => {
     if (partsListing !== null) {
-      if (partsListing && unavailableQualities.includes(selectedFilter)) {
-        setSelectedFilter(QualityFilter.Any)
-      } else {
+      if (
+        availableQualities(partsListing).includes(props.initialQualityFilter)
+      ) {
         setSelectedFilter(props.initialQualityFilter)
+      } else {
+        setSelectedFilter(QualityFilter.Any)
       }
     }
   }, [partsListing])

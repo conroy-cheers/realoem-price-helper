@@ -28,7 +28,6 @@ export async function getParts(
     try {
       let newListing = await getPartsListing(partNumber, vendor)
       searchResults.push(newListing)
-      console.log(searchResults)
       setPartsListing(
         await mergePartsListings(searchResults, preferredCurrency)
       )

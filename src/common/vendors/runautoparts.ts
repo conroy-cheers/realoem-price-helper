@@ -34,7 +34,6 @@ export class RunAutoPartsSearchConfig extends SearchConfig {
     const index = this.client.initIndex("magento2_default_products")
     try {
       const searchResponse = await index.search(this.partNumber, {})
-      console.log(searchResponse)
 
       return {
         parts: await Promise.all(

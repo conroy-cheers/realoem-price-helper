@@ -55,7 +55,7 @@ export const render: PlasmoRender<PlasmoCSUIJSXContainer> = async (
   ) as QualityFilter
 
   root.render(
-    <InlineCSUIContainer>
+    <InlineCSUIContainer anchor={anchor}>
       <ShopDetail
         partNumber={partNumber}
         initialQualityFilter={qualityFilter}

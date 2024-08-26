@@ -83,3 +83,12 @@ export function qualityFiltersUnavailable(
     .map(([filter, count]) => filter)
   return unavailableKeys
 }
+
+export function qualityFiltersAvailable(
+  listing: PartsListing
+): QualityFilter[] {
+  const availableKeys = Array.from(exactMatchesPerFilter(listing).entries())
+    .filter(([filter, count]) => count > 0)
+    .map(([filter, count]) => filter)
+  return availableKeys
+}

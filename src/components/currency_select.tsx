@@ -32,7 +32,6 @@ const CurrencyUnitSelect: FC<CurrencyUnitSelectProps> = ({
   }
 
   const handleChange = (e) => {
-    console.log(JSON.stringify(e.target.value))
     setValue(e.target.value)
   }
 

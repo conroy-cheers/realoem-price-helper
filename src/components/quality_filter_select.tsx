@@ -50,7 +50,6 @@ const QualityFilterSelect: FC<QualityFilterSelectProps> = ({
   }
 
   const handleChange = (e) => {
-    console.log(JSON.stringify(e.target.value))
     setValue(Number(e.target.value))
   }
 
