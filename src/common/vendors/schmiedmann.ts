@@ -224,7 +224,9 @@ async function parseProduct(product: SearchProduct): Promise<PartInfo> {
     price: product.PriceExVat,
     currency: getCurrency(product.Currency),
     detail: {
-      image: new URL(`/imagehandler/0/${product.ImageIds[0]}.jpg`, URL_BASE)
+      image: product.ImageIds
+        ? new URL(`/imagehandler/0/${product.ImageIds[0]}.jpg`, URL_BASE)
+        : null
     }
   }
 }
