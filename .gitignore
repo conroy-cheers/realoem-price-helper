@@ -31,3 +31,9 @@ dist/
 
 # typescript
 .tsbuildinfo
+
+# direnv
+.direnv
+
+# nix
+result
